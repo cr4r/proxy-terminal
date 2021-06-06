@@ -1,0 +1,21 @@
+#!/bin/bash
+var_proxy=http://192.168.49.1:8282/
+
+if [[ $1 == "off" ]]; then
+  unset all_proxy
+  sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
+elif [[ $1 == "status" ]]; then
+ if [[ -e /etc/apt/apt.conf.d/proxy.conf ]]; then
+  echo "Proxy Aktif!"
+ else
+   echo "Proxy Sudah Mati"
+ fi
+else
+  export all_proxy="$var_proxy"
+  export NO_PROXY=localhost,127.0.0.1,::1
+cat > proxy.conf << EOF
+Acquire::http::Proxy "$var_proxy";
+Acquire::https::Proxy "$var_proxy";
+EOF
+  sudo mv proxy.conf /etc/apt/apt.conf.d/proxy.conf
+fi
