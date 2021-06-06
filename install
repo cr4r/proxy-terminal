@@ -1,9 +1,9 @@
 #!/bin/bash
 sudo cp install /bin/install&&sudo chmod 777 /bin/install
-echo 'Instalasi Selesai!'
-echo 'Silahkan ketik
-echo 'sudo proxy'
-echo 'untuk Mengaktifkan proxy, untuk mematikan tinggal ketik'
-echo 'sudo proxy off'
-echo 'Untuk Lihat status proxy mati atau hidup, ketik'
-echo 'sudo proxy status'
+echo Instalasi Selesai!
+echo Silahkan keti
+echo sudo proxy
+echo untuk Mengaktifkan proxy, untuk mematikan tinggal ketik
+echo sudo proxy off
+echo Untuk Lihat status proxy mati atau hidup, ketik
+echo sudo proxy status
