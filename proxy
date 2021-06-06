@@ -33,7 +33,6 @@ else
   npm config set proxy $var_proxy &>/dev/null
   npm config set http-proxy $var_proxy &>/dev/null
   npm config set https-proxy $var_proxy &>/dev/null
-  strict-ssl=false
 
   cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
