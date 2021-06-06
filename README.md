@@ -13,12 +13,12 @@ Saya menggunakan ubuntu 20.04 dan sudah coba bekerja dengan baik, silahkan coba 
 ## Fitur
 1. Menghidupkan proxy
 ```bash
-sudo proxy```
+sudo proxy ```
 <br>
 2. Mematikan fungsi proxy
 ```bash
-sudo proxy off```
+sudo proxy off ```
 <br>
 3. Lihat status proxy
 ```bash
-sudo proxy status```
+sudo proxy status ```
