@@ -8,17 +8,21 @@ Saya menggunakan ubuntu 20.04 dan sudah coba bekerja dengan baik, silahkan coba 
 
 ## Cara Instalasi
 ```bash
-./install```
-<br>
+./install
+```
+
 ## Fitur
 1. Menghidupkan proxy
 ```bash
-sudo proxy```
-<br>
+sudo proxy
+```
+
 2. Mematikan fungsi proxy
 ```bash
-sudo proxy off```
-<br>
+sudo proxy off
+```
+
 3. Lihat status proxy
 ```bash
-sudo proxy status```
+sudo proxy status
+```
