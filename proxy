@@ -4,14 +4,10 @@ var_proxy=http://192.168.49.1:8282/
 if [[ $1 == "off" ]]; then
   unset http_proxy
   unset https_proxy
-  unset ftp_proxy
-  unset ftps_proxy
   unset NO_PROXY
 
   git config --global --unset http.proxy
   git config --global --unset https.proxy
-  git config --global --unset ftp.proxy
-  git config --global --unset ftps.proxy
 
   sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
 elif [[ $1 == "status" ]]; then
@@ -23,14 +19,10 @@ elif [[ $1 == "status" ]]; then
 else
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
-  export ftp_proxy="$var_proxy"
-  export ftps_proxy="$var_proxy"
   export NO_PROXY=localhost,127.0.0.1,::1
 
   git config --global http.proxy $var_proxy
   git config --global https.proxy $var_proxy
-  git config --global ftp.proxy $var_proxy
-  git config --global ftps.proxy $var_proxy
 
   cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
