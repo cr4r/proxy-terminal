@@ -1,9 +1,9 @@
-# proxy-terminal
+# Proxy-Terminal
 ## Fungsi
 1. Tool ini berfungsi untuk mengaktifkan proxy melalui terminal<br>
 2. Jika anda tidak bisa mengupdate package karena harus pakai, tool ini solusinya. <br>
-3. Jika anda tidak bisa git push karena harus pakai proxy, tool ini solusinya. <br>
-4. Jika anda menggunakan netshare (android) dan ingin menyebarkan wifi yang anda pakai dan ingin pakai komputer anda, maka tool ini solusinya
+3. Jika anda menggunakan netshare (android) dan ingin menyebarkan wifi yang anda pakai dan ingin pakai komputer anda, maka tool ini solusinya. <br>
+4. Jika anda tidak bisa git push karena harus pakai proxy, tool ini solusinya.
 
 ## Rekomendasi OS
 Saya menggunakan ubuntu 20.04 dan sudah coba bekerja dengan baik, silahkan coba di os lain jika mau.

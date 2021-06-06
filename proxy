@@ -9,6 +9,8 @@ if [[ $1 == "off" ]]; then
   git config --global --unset http.proxy
   git config --global --unset https.proxy
 
+  npm config rm proxy &>/dev/null
+
   sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
 elif [[ $1 == "status" ]]; then
   if [[ -e /etc/apt/apt.conf.d/proxy.conf ]]; then
@@ -23,6 +25,8 @@ else
 
   git config --global http.proxy $var_proxy
   git config --global https.proxy $var_proxy
+
+  npm config set proxy $var_proxy &>/dev/null
 
   cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
