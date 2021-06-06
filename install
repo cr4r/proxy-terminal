@@ -1,7 +1,7 @@
 #!/bin/bash
-sudo cp install /bin/install&&sudo chmod 777 /bin/install
+sudo cp install /bin/proxy && sudo chmod 777 /bin/proxy
 echo Instalasi Selesai!
-echo Silahkan keti
+echo Silahkan ketik
 echo sudo proxy
 echo untuk Mengaktifkan proxy, untuk mematikan tinggal ketik
 echo sudo proxy off

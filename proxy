@@ -10,14 +10,18 @@ if [[ $1 == "off" ]]; then
   git config --global --unset https.proxy
 
   npm config rm proxy &>/dev/null
+  npm config rm http-proxy &>/dev/null
+  npm config rm https-proxy &>/dev/null
 
   sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
+
 elif [[ $1 == "status" ]]; then
   if [[ -e /etc/apt/apt.conf.d/proxy.conf ]]; then
     echo "Proxy Aktif!"
   else
     echo "Proxy Sudah Mati"
   fi
+
 else
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
@@ -27,6 +31,9 @@ else
   git config --global https.proxy $var_proxy
 
   npm config set proxy $var_proxy &>/dev/null
+  npm config set http-proxy $var_proxy &>/dev/null
+  npm config set https-proxy $var_proxy &>/dev/null
+  strict-ssl=false
 
   cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
