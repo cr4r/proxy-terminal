@@ -24,18 +24,13 @@ var_proxy=http://192.168.49.1:8282/
 dengan ip proxy kamu
 ```
 
-## Fitur
-1. Menghidupkan proxy
+## INFORMASI
 ```bash
 sudo proxy
 ```
 
+## Fitur
+1. Menghidupkan proxy
 2. Mematikan fungsi proxy
-```bash
-sudo proxy off
-```
-
 3. Lihat status proxy
-```bash
-sudo proxy status
-```
+3. Edit IP proxy
