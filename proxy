@@ -46,6 +46,7 @@ msg() {
 
 if [[ "${EUID}" -ne 0 ]]; then
   msg -verm "Kamu harus jalankan script ini mode root"
+  msg -verm "Ketik $(msg -bra "sudo proxy") "
   exit 1
 fi
 
