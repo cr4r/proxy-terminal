@@ -85,7 +85,10 @@ if [[ $1 == "off" ]]; then
   msg -bar
   unset http_proxy
   unset https_proxy
+  unset HTTP_PROXY
+  unset HTTPS_PROXY
   unset NO_PROXY
+
   msg -garis "√ hapus Environment"
 
   git config --global --unset http.proxy
@@ -114,6 +117,8 @@ elif [[ $1 == "on" ]]; then
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
   export NO_PROXY=localhost,127.0.0.1,::1
+  export HTTP_PROXY="$var_proxy"
+  export HTTPS_PROXY="$var_proxy"
   msg -garis "√ Membuat proxy di Environment"
 
   git config --global http.proxy $var_proxy
