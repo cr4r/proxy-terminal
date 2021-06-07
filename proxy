@@ -50,6 +50,25 @@ if [[ "${EUID}" -ne 0 ]]; then
   exit 1
 fi
 
+# Tutorial
+infoProtokol="PROTOKOL =>
+  - http / https / ftp / ftps / socks
+- PROTOKOL://IP:PORT
+- PROTOKOL://USER:PASSWORD@IP:PORT"
+infoEditProxy="==> sudo proxy edit FormatIPProxy"
+infoProxyOn="==> sudo proxy on"
+infoProxyOff="==> sudo proxy on"
+infoStatus="==> sudo proxy status"
+infoVS="- Buka setting
+- Cari = proxy
+- Matikan √ pada Http: Proxy Strict SSL
+- Pada Http: Proxy Support => override
+- Pada Http: Proxy => isi proxy kalian"
+infoSetting="- Klik tombol start / windows
+- Cari = proxy
+- Pilih Gunakan konfigurasi proxy yang ditentukan secara manual
+- √ Gunakan server proxy ini untuk semua protokol"
+
 [[ ! -e ${flproxy} ]] && {
   msg -bra "1. Format Input IP Proxy"
   msg -ama "PROTOKOL =>"
@@ -64,23 +83,23 @@ var_proxy=$(cat ${flproxy} &>/dev/null)
 
 if [[ $1 == "off" ]]; then
   msg -bar
-  msg -garis "Sedang hapus Environment"
   unset http_proxy
   unset https_proxy
   unset NO_PROXY
+  msg -garis "√ hapus Environment"
 
-  msg -garis "Sedang hapus proxy di GIT"
   git config --global --unset http.proxy
   git config --global --unset https.proxy
+  msg -garis "√ hapus proxy di GIT"
 
-  msg -garis "Sedang hapus proxy di NPM"
   npm config rm proxy &>/dev/null
   npm config rm http-proxy &>/dev/null
   npm config rm https-proxy &>/dev/null
+  msg -garis "√ hapus proxy di NPM"
 
-  msg -garis "Sedang hapus proxy di APT"
-  msg -bar
   sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
+  msg -garis "√ hapus proxy di APT"
+  msg -bar
 
 elif [[ $1 == "status" ]]; then
 
@@ -92,26 +111,26 @@ elif [[ $1 == "status" ]]; then
 
 elif [[ $1 == "on" ]]; then
   msg -bar
-  msg -garis "Membuat proxy di Environment"
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
   export NO_PROXY=localhost,127.0.0.1,::1
+  msg -garis "√ Membuat proxy di Environment"
 
-  msg -garis "Membuat proxy di GIT"
   git config --global http.proxy $var_proxy
   git config --global https.proxy $var_proxy
+  msg -garis "√ Membuat proxy di GIT"
 
-  msg -garis "Membuat proxy di NPM"
   npm config set proxy $var_proxy &>/dev/null
   npm config set http-proxy $var_proxy &>/dev/null
   npm config set https-proxy $var_proxy &>/dev/null
+  msg -garis "√ Membuat proxy di NPM"
 
-  msg -garis "Membuat proxy di APT"
   cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
 Acquire::https::Proxy "$var_proxy";
 EOF
   sudo mv proxy.conf /etc/apt/apt.conf.d/proxy.conf
+  msg -garis "√ Membuat proxy di APT"
   msg -bar
 
 elif [[ $1 == "edit" ]]; then
@@ -122,28 +141,18 @@ else
   msg -bar
   msg -azu "========= Tutorial ========="
   msg -bra "1. Format Input IP Proxy"
-  msg -ama "PROTOKOL =>"
-  msg -ama "  - http / https / ftp / ftps / socks"
-  msg -ama "=> PROTOKOL://IP:PORT"
-  msg -ama "=> PROTOKOL://USER:PASSWORD@IP:PORT"
+  msg -ama "${infoProtokol}"
   msg -bra "2. Edit IP Proxy"
-  msg -ama "==> sudo proxy edit FormatIPProxy"
+  msg -ama "${infoEditProxy}"
   msg -bra "3. Menghidupkan proxy"
-  msg -ama "==> sudo proxy on"
+  msg -ama "${infoProxyOn}"
   msg -bra "4. Mematikan proxy"
-  msg -ama "==> sudo proxy off"
+  msg -ama "${infoProxyOff}"
   msg -bra "5. Melihat proxy mati atau hidup"
-  msg -ama "==> sudo proxy status"
+  msg -ama "${infoStatus}"
   msg -bra "6. Menghidupkan proxy pada visual code"
-  msg -ama "- Buka setting"
-  msg -ama "- Cari = proxy"
-  msg -ama "- Matikan √ pada Http: Proxy Strict SSL"
-  msg -ama "- Pada Http: Proxy Support => override"
-  msg -ama "- Pada Http: Proxy => isi proxy kalian"
+  msg -ama "${infoVS}"
   msg -bra "7. Menghidupkan proxy di setting ubuntu"
-  msg -ama "- Klik tombol start / windows"
-  msg -ama "- Cari = proxy"
-  msg -ama "- Pilih Gunakan konfigurasi proxy yang ditentukan secara manual"
-  msg -ama "- √ Gunakan server proxy ini untuk semua protokol"
+  msg -ama "${infoSetting}"
   msg -bar
 fi
