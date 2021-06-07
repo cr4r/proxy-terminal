@@ -139,5 +139,10 @@ else
   msg -ama "- Matikan √ pada Http: Proxy Strict SSL"
   msg -ama "- Pada Http: Proxy Support => override"
   msg -ama "- Pada Http: Proxy => isi proxy kalian"
+  msg -bra "7. Menghidupkan proxy di setting ubuntu"
+  msg -ama "- Klik tombol start / windows"
+  msg -ama "- Cari = proxy"
+  msg -ama "- Pilih Gunakan konfigurasi proxy yang ditentukan secara manual"
+  msg -ama "- √ Gunakan server proxy ini untuk semua protokol"
   msg -bar
 fi
