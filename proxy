@@ -116,9 +116,9 @@ elif [[ $1 == "on" ]]; then
   msg -bar
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
-  export NO_PROXY=localhost,127.0.0.1,::1
   export HTTP_PROXY="$var_proxy"
   export HTTPS_PROXY="$var_proxy"
+  export NO_PROXY=localhost,127.0.0.1,::1
   msg -garis "√ Membuat proxy di Environment"
 
   git config --global http.proxy $var_proxy
