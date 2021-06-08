@@ -44,11 +44,13 @@ msg() {
   esac
 }
 
-if [[ "${EUID}" -ne 0 ]]; then
-  msg -verm "Kamu harus jalankan script ini mode root"
-  msg -verm "Ketik $(msg -bra "sudo proxy") "
-  exit 1
-fi
+isRoot() {
+  if [[ "${EUID}" -ne 0 ]]; then
+    msg -verm "Kamu harus jalankan script ini mode root"
+    msg -verm "Ketik $(msg -bra "sudo proxy") "
+    exit 1
+  fi
+}
 
 # Tutorial
 infoProtokol="PROTOKOL =>
@@ -56,9 +58,13 @@ infoProtokol="PROTOKOL =>
 - PROTOKOL://IP:PORT
 - PROTOKOL://USER:PASSWORD@IP:PORT"
 infoEditProxy="==> sudo proxy edit FormatIPProxy"
-infoProxyOn="==> sudo proxy on"
-infoProxyOff="==> sudo proxy on"
-infoStatus="==> sudo proxy status"
+infoProxyOn="==> proxy on
+== Untuk menghidupkan proxy pada apt ==
+sudo proxy on apt"
+infoProxyOff="==> proxy off
+== Untuk mematikan proxy pada apt ==
+sudo proxy off apt"
+infoStatus="==> proxy status"
 infoVS="- Buka setting
 - Cari = proxy
 - Matikan √ pada Http: Proxy Strict SSL
@@ -70,6 +76,7 @@ infoSetting="- Klik tombol start / windows
 - √ Gunakan server proxy ini untuk semua protokol"
 
 [[ ! -e ${flproxy} ]] && {
+  isRoot
   msg -bra "1. Format Input IP Proxy"
   msg -ama "PROTOKOL =>"
   msg -ama "  - http / https / ftp / ftps / socks"
@@ -100,9 +107,12 @@ if [[ $1 == "off" ]]; then
   npm config rm https-proxy &>/dev/null
   msg -garis "√ hapus proxy di NPM"
 
-  sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
-  msg -garis "√ hapus proxy di APT"
-  msg -bar
+  if [[ $2 == "apt" ]]; then
+    isRoot
+    sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
+    msg -garis "√ hapus proxy di APT"
+    msg -bar
+  fi
 
 elif [[ $1 == "status" ]]; then
 
@@ -130,15 +140,19 @@ elif [[ $1 == "on" ]]; then
   npm config set https-proxy $var_proxy &>/dev/null
   msg -garis "√ Membuat proxy di NPM"
 
-  cat >proxy.conf <<EOF
+  if [[ $2 == "apt" ]]; then
+    isRoot
+    cat >proxy.conf <<EOF
 Acquire::http::Proxy "$var_proxy";
 Acquire::https::Proxy "$var_proxy";
 EOF
-  sudo mv proxy.conf /etc/apt/apt.conf.d/proxy.conf
-  msg -garis "√ Membuat proxy di APT"
-  msg -bar
+    sudo mv proxy.conf /etc/apt/apt.conf.d/proxy.conf
+    msg -garis "√ Membuat proxy di APT"
+    msg -bar
+  fi
 
 elif [[ $1 == "edit" ]]; then
+  isRoot
   echo $2 >$flproxy
 else
   msg -bar
