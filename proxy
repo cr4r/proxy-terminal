@@ -2,6 +2,8 @@
 
 # Pembuatan variabel untuk proxy
 flproxy=/etc/ipproxy
+environmentFile=/etc/environment
+
 red=$(tput setaf 1)
 gren=$(tput setaf 2)
 yellow=$(tput setaf 3)
@@ -58,10 +60,10 @@ isRoot() {
   if [[ "${EUID}" -ne 0 ]]; then
     msg -verm "Kamu harus jalankan script ini mode root"
     msg -verm "Ketik $(msg -bra "sudo proxy") "
+    return 1
   else
     return 0
   fi
-  return 1
 }
 
 isUrl(){
@@ -106,7 +108,7 @@ infoSetting="- Klik tombol start / windows
 - √ Gunakan server proxy ini untuk semua protokol"
 
 [[ ! -e ${flproxy} ]] && {
-  if [ isRoot -eq 0 ];then
+  if [[ isRoot -eq 0 ]];then
     msg -bra "1. Format Input IP Proxy"
     msg -ama "PROTOKOL =>"
     msg -ama "  - http / https / ftp / ftps / socks"
@@ -140,11 +142,21 @@ if [[ $1 == "off" ]]; then
   npm config rm https-proxy &>/dev/null
   msg -garis "√ hapus proxy di NPM"
 
-  if [ isRoot -eq 0 ]; then
+  if [[ isRoot -eq 0 ]]; then
+    # Setup di file environment All User
+    if [[ `grep -c "^#Proxy" $environmentFile` -eq 1 ]]; then
+      grep -v "^#Proxy
+http_proxy=\"$var_proxy\"
+https_proxy=\"$var_proxy\"
+ftp_proxy=\"$var_proxy\"
+NO_PROXY=\"localhost,127.0.0.1,::1\"" $environmentFile > /tmp/envbackup && mv -f /tmp/envbackup $environmentFile
+fi
+
     sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
     msg -garis "√ hapus proxy di APT"
     msg -bar
   else
+    msg -garis "* Setting file environment untuk semua user"
     msg -garis "Jika ingin menghapus proxy pada APT"
     msg -ama "sudo proxy off"
   fi
@@ -156,8 +168,7 @@ elif [[ $1 == "on" ]]; then
   msg -garis "√ Membuat proxy di Environment"
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
-  export HTTP_PROXY="$var_proxy"
-  export HTTPS_PROXY="$var_proxy"
+  export ftp_proxy="$var_proxy"
   export NO_PROXY=localhost,127.0.0.1,::1
 
   msg -garis "√ Membuat proxy di GIT"
@@ -169,7 +180,16 @@ elif [[ $1 == "on" ]]; then
   npm config set http-proxy $var_proxy &>/dev/null
   npm config set https-proxy $var_proxy &>/dev/null
 
-  if [ isRoot  -eq 0 ]; then
+  if [[ isRoot -eq 0 ]]; then
+    # Setup di file environment All User
+    if [[ `grep -c "^#Proxy" $environmentFile` -eq 0 ]]; then
+      echo "#Proxy" >> $environmentFile
+      echo "http_proxy=\"$var_proxy\""  >> $environmentFile
+      echo "https_proxy=\"$var_proxy\"" >> $environmentFile
+      echo "ftp_proxy=\"$var_proxy\"" >> $environmentFile
+      echo "NO_PROXY=\"localhost,127.0.0.1,::1\"" >> $environmentFile
+    fi
+
     msg -garis "√ Membuat proxy di APT"
     cat > /etc/apt/apt.conf.d/proxy.conf << EOF
 Acquire::http::Proxy "$var_proxy";
@@ -177,24 +197,38 @@ Acquire::https::Proxy "$var_proxy";
 EOF
     msg -bar
   else
-    msg -garis "Jika ingin menghidupkan proxy pada APT"
+    msg -garis "* Setting file environment untuk semua user"
+    msg -garis "* Jika ingin menghidupkan proxy pada APT"
     msg -ama "sudo proxy on"
+    msg -bar
+
   fi
   # cek status proxy kembali
   proxy status
+  echo $http_proxy
 
 # Mengecek Status Proxy
 elif [[ $1 == "status" ]]; then
-  cek=$(isUrl $http_proxy)
+  if [[ $(isUrl $http_proxy) -eq 0 ]]; then
+    cek=0
+  elif [[ $(isUrl $https_proxy) -eq 0 ]]; then
+    cek=0
+  else
+    cek=1
+  fi
+
   if [[ cek -eq 0  ]]; then
     msg -ama "PROXY Aktif!"
+    msg -ama "http => $http_proxy"
+    msg -ama "https => $https_proxy"
+    msg -ama "ftp => $ftp_proxy"
   else
     msg -ama "PROXY Mati!"
   fi
 
 # Mengedit proxy pada system
 elif [[ $1 == "edit" ]]; then
-  if [ isRoot  -eq 0 ]; then
+  if [[ isRoot -eq 0 ]]; then
     echo $2 >$flproxy
   else
     msg -ama "Gunakan sudo untuk mengedit proxy"

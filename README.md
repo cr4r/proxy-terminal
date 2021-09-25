@@ -8,10 +8,10 @@
 ## Rekomendasi OS
 ✘ Windows <br>
 √ Linux <br>
-  √ Ubuntu 20.04 GNOME <br>
-  √ Ubuntu 20.04 KDE Plasma <br>
-  √ Linux Mint 20.2 xfce <br>
-  √ Coba versi lain
+ - √ Ubuntu 20.04 GNOME <br>
+ - √ Ubuntu 20.04 KDE Plasma <br>
+ - √ Linux Mint 20.2 xfce <br>
+ - √ Coba versi lain
 
 ## Cara Instalasi
 ```bash
@@ -30,7 +30,8 @@ sudo proxy
 4. Edit IP proxy
 
 ## Support
-1. Environment
-2. GIT
-3. NPM
-4. APT
+1. Environment bash
+2. Perubahan file /etc/environment
+3. GIT
+4. NPM
+5. APT
