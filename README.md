@@ -8,12 +8,14 @@
 ## Rekomendasi OS
 ✘ Windows
 √ Linux
-  √ Ubuntu 20.04
+  √ Ubuntu 20.04 GNOME
+  √ Ubuntu 20.04 KDE Plasma
+  √ Linux Mint 20.2 xfce
   √ Coba versi lain
 
 ## Cara Instalasi
 ```bash
-./install
+sudo ./install
 ```
 
 ## INFORMASI
@@ -25,4 +27,10 @@ sudo proxy
 1. Menghidupkan proxy
 2. Mematikan fungsi proxy
 3. Lihat status proxy
-3. Edit IP proxy
+4. Edit IP proxy
+
+## Support
+1. Environment
+2. GIT
+3. NPM
+4. APT
