@@ -1,18 +1,28 @@
 #!/bin/bash
+
+# Pembuatan variabel untuk proxy
 flproxy=/etc/ipproxy
 red=$(tput setaf 1)
 gren=$(tput setaf 2)
 yellow=$(tput setaf 3)
 
+# Pewarnaan terminal biar keren
 msg() {
   local colors="/etc/new-adm-color"
   if [[ ! -e $colors ]]; then
+    # Putih
     COLOR[0]='\033[1;37m' #BRAN='\033[1;37m'
+    # Merah
     COLOR[1]='\e[31m'     #VERMELHO='\e[31m'
+    # Hijau
     COLOR[2]='\e[32m'     #VERDE='\e[32m'
+    # Kuning
     COLOR[3]='\e[33m'     #AMARELO='\e[33m'
+    # Biru
     COLOR[4]='\e[34m'     #AZUL='\e[34m'
+    # Magenta
     COLOR[5]='\e[35m'     #MAGENTA='\e[35m'
+    # Mag
     COLOR[6]='\033[1;36m' #MAG='\033[1;36m'
   else
     local COL=0
@@ -48,45 +58,68 @@ isRoot() {
   if [[ "${EUID}" -ne 0 ]]; then
     msg -verm "Kamu harus jalankan script ini mode root"
     msg -verm "Ketik $(msg -bra "sudo proxy") "
-    exit 1
+  else
+    return 0
+  fi
+  return 1
+}
+
+isUrl(){
+  regex='^(http?|https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
+  if [[ $1 =~ $regex ]]; then 
+    echo 0
+  else
+    echo 1
   fi
 }
 
 # Tutorial
 infoProtokol="PROTOKOL =>
-  - http / https / ftp / ftps / socks
+- http / https / ftp / ftps / socks
 - PROTOKOL://IP:PORT
 - PROTOKOL://USER:PASSWORD@IP:PORT"
+
 infoEditProxy="==> sudo proxy edit FormatIPProxy"
+
 infoProxyOn="==> proxy on
-== Untuk menghidupkan proxy pada apt ==
-sudo proxy on apt"
+== Menghidupkan proxy otomatis ==
+Jika ingin menghidupkan Proxy pada APT
+\"sudo proxy off\""
+
 infoProxyOff="==> proxy off
 == Untuk mematikan proxy pada apt ==
-sudo proxy off apt"
+Jika ingin menonaktifkan Proxy pada APT
+\"sudo proxy off\""
+
 infoStatus="==> proxy status"
+
 infoVS="- Buka setting
 - Cari = proxy
 - Matikan √ pada Http: Proxy Strict SSL
 - Pada Http: Proxy Support => override
 - Pada Http: Proxy => isi proxy kalian"
+
 infoSetting="- Klik tombol start / windows
 - Cari = proxy
 - Pilih Gunakan konfigurasi proxy yang ditentukan secara manual
 - √ Gunakan server proxy ini untuk semua protokol"
 
 [[ ! -e ${flproxy} ]] && {
-  isRoot
-  msg -bra "1. Format Input IP Proxy"
-  msg -ama "PROTOKOL =>"
-  msg -ama "  - http / https / ftp / ftps / socks"
-  msg -ama "=> PROTOKOL://IP:PORT"
-  msg -ama "=> PROTOKOL://USER:PASSWORD@IP:PORT"
-  read -rp "$(msg -verd "Masukkan IP Proxy"): " opsi
-  echo $opsi >$flproxy &>/dev/null
-  touch ${flproxy} &>/dev/null
+  if [ isRoot -eq 0 ];then
+    msg -bra "1. Format Input IP Proxy"
+    msg -ama "PROTOKOL =>"
+    msg -ama "  - http / https / ftp / ftps / socks"
+    msg -ama "=> PROTOKOL://IP:PORT"
+    msg -ama "=> PROTOKOL://USER:PASSWORD@IP:PORT"
+    read -rp "$(msg -verd "Masukkan IP Proxy"): " opsi
+    echo $opsi>$flproxy &>/dev/null
+    touch ${flproxy} &>/dev/null
+  fi
 }
-var_proxy=$(cat ${flproxy} &>/dev/null)
+
+# Mengisi ip proxy ke variable
+var_proxy=$(cat ${flproxy})
 
 if [[ $1 == "off" ]]; then
   msg -bar
@@ -107,53 +140,67 @@ if [[ $1 == "off" ]]; then
   npm config rm https-proxy &>/dev/null
   msg -garis "√ hapus proxy di NPM"
 
-  if [[ $2 == "apt" ]]; then
-    isRoot
+  if [ isRoot -eq 0 ]; then
     sudo rm -rf /etc/apt/apt.conf.d/proxy.conf
     msg -garis "√ hapus proxy di APT"
     msg -bar
-  fi
-
-elif [[ $1 == "status" ]]; then
-
-  if [[ -e /etc/apt/apt.conf.d/proxy.conf ]]; then
-    msg -ama "PROXY Aktif!"
   else
-    msg -ama "PROXY Mati!"
+    msg -garis "Jika ingin menghapus proxy pada APT"
+    msg -ama "sudo proxy off"
   fi
+  # cek status proxy kembali
+  proxy status
 
 elif [[ $1 == "on" ]]; then
   msg -bar
+  msg -garis "√ Membuat proxy di Environment"
   export http_proxy="$var_proxy"
   export https_proxy="$var_proxy"
   export HTTP_PROXY="$var_proxy"
   export HTTPS_PROXY="$var_proxy"
   export NO_PROXY=localhost,127.0.0.1,::1
-  msg -garis "√ Membuat proxy di Environment"
 
+  msg -garis "√ Membuat proxy di GIT"
   git config --global http.proxy $var_proxy
   git config --global https.proxy $var_proxy
-  msg -garis "√ Membuat proxy di GIT"
 
+  msg -garis "√ Membuat proxy di NPM"
   npm config set proxy $var_proxy &>/dev/null
   npm config set http-proxy $var_proxy &>/dev/null
   npm config set https-proxy $var_proxy &>/dev/null
-  msg -garis "√ Membuat proxy di NPM"
 
-  if [[ $2 == "apt" ]]; then
-    isRoot
-    cat >proxy.conf <<EOF
+  if [ isRoot  -eq 0 ]; then
+    msg -garis "√ Membuat proxy di APT"
+    cat > /etc/apt/apt.conf.d/proxy.conf << EOF
 Acquire::http::Proxy "$var_proxy";
 Acquire::https::Proxy "$var_proxy";
 EOF
-    sudo mv proxy.conf /etc/apt/apt.conf.d/proxy.conf
-    msg -garis "√ Membuat proxy di APT"
     msg -bar
+  else
+    msg -garis "Jika ingin menghidupkan proxy pada APT"
+    msg -ama "sudo proxy on"
+  fi
+  # cek status proxy kembali
+  proxy status
+
+# Mengecek Status Proxy
+elif [[ $1 == "status" ]]; then
+  cek=$(isUrl $http_proxy)
+  if [[ cek -eq 0  ]]; then
+    msg -ama "PROXY Aktif!"
+  else
+    msg -ama "PROXY Mati!"
   fi
 
+# Mengedit proxy pada system
 elif [[ $1 == "edit" ]]; then
-  isRoot
-  echo $2 >$flproxy
+  if [ isRoot  -eq 0 ]; then
+    echo $2 >$flproxy
+  else
+    msg -ama "Gunakan sudo untuk mengedit proxy"
+    msg -ama "sudo proxy edit PROTOKOL://IPPROXY:PORT"
+  fi
+
 else
   msg -bar
   msg -ama "Tool konfigurasi proxy otomatis"
@@ -171,7 +218,7 @@ else
   msg -ama "${infoStatus}"
   msg -bra "6. Menghidupkan proxy pada visual code"
   msg -ama "${infoVS}"
-  msg -bra "7. Menghidupkan proxy di setting ubuntu"
+  msg -bra "7. Menghidupkan proxy di setting ubuntu (GNOME)"
   msg -ama "${infoSetting}"
   msg -bar
 fi

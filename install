@@ -51,14 +51,4 @@ fi
 sudo cp proxy /bin/proxy && sudo chmod 777 /bin/proxy
 
 msg -azu "============== Instalasi Selesai! ============== "
-msg -bar
-msg -ama "Tool konfigurasi proxy otomatis"
-msg -bar
-msg -azu "======= Tutorial ======="
-msg -bra "1. Menghidupkan proxy"
-msg -ama "==> sudo proxy on"
-msg -bra "2. Mematikan proxy"
-msg -ama "==> sudo proxy off"
-msg -bra "3. Melihat proxy mati atau hidup"
-msg -ama "==> sudo proxy status"
-msg -bar
+proxy
