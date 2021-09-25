@@ -6,11 +6,11 @@
 4. Jika anda tidak bisa git push karena harus pakai proxy, tool ini solusinya.
 
 ## Rekomendasi OS
-✘ Windows
-√ Linux
-  √ Ubuntu 20.04 GNOME
-  √ Ubuntu 20.04 KDE Plasma
-  √ Linux Mint 20.2 xfce
+✘ Windows <br>
+√ Linux <br>
+  √ Ubuntu 20.04 GNOME <br>
+  √ Ubuntu 20.04 KDE Plasma <br>
+  √ Linux Mint 20.2 xfce <br>
   √ Coba versi lain
 
 ## Cara Instalasi
